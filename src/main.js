@@ -440,6 +440,7 @@ function resetGame() {
   ui.sightings.textContent = `0 / ${celebrityLandmarks.length}`;
   updateGateEmphasis();
   ui.finish.classList.remove('visible');
+  ui.finish.setAttribute('aria-hidden', 'true');
   gameState = 'playing';
   startTime = performance.now();
   startAudio();
@@ -471,6 +472,7 @@ function showPilotMenu() {
   ui.camera.innerHTML = '↗ <span>Chase</span>';
   ui.hud.classList.remove('visible');
   ui.finish.classList.remove('visible');
+  ui.finish.setAttribute('aria-hidden', 'true');
   ui.pauseScreen.classList.remove('visible');
   ui.pauseScreen.setAttribute('aria-hidden', 'true');
   ui.start.classList.remove('hidden');
@@ -512,6 +514,7 @@ function finishGame() {
   ui.finalTime.textContent = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, '0')}`;
   ui.finalFollowers.textContent = formatFollowers(followers - 1_200_000);
   ui.finish.classList.add('visible');
+  ui.finish.setAttribute('aria-hidden', 'false');
   if (rotorGain) rotorGain.gain.setTargetAtTime(.006, audioContext.currentTime, .2);
 }
 
