@@ -20,7 +20,7 @@ The game is built with vanilla JavaScript, Three.js, and Vite. It runs entirely 
 Requirements: Node.js 20 or newer and npm.
 
 ```bash
-git clone https://github.com/momenweb/rotor-rush.git
+git clone https://github.com/momenbuilds/rotor-rush.git
 cd rotor-rush
 npm install
 npm run dev

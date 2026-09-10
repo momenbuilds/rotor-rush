@@ -5,10 +5,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/momenweb/rotor-rush.git"
+    "url": "https://github.com/momenbuilds/rotor-rush.git"
   },
   "homepage": "https://rotor-rush.vercel.app",
-  "bugs": "https://github.com/momenweb/rotor-rush/issues",
+  "bugs": "https://github.com/momenbuilds/rotor-rush/issues",
   "type": "module",
   "scripts": {
     "dev": "vite",
