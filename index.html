@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#8fd8ee" />
+    <meta name="description" content="Rotor Rush — a playful 3D celebrity jetpack game." />
+    <meta property="og:title" content="Rotor Rush" />
+    <meta property="og:description" content="Choose a pilot, strap on a helicopter backpack, and race through Reykjavík." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>Rotor Rush</title>
+  </head>
+  <body>
+    <canvas id="game" aria-label="Rotor Rush 3D game"></canvas>
+
+    <main class="shell">
+      <section class="start-screen" id="startScreen">
+        <div class="brand-mark" aria-hidden="true">
+          <span class="rotor-line"></span>
+          <span class="brand-badge">R</span>
+        </div>
+        <p class="location-pill">Reykjavík flight test</p>
+        <h1>Rotor<br />Rush</h1>
+        <p class="intro">Strap a ridiculous helicopter to a famous founder, race through Reykjavík, and spot four giant surprise guests.</p>
+
+        <div class="pilot-picker">
+          <div class="pilot-picker-heading">
+            <div><span>Choose your pilot</span><strong id="selectedPilotName">Elon Musk</strong></div>
+            <small>5 available</small>
+          </div>
+          <div class="pilot-roster" role="group" aria-label="Choose your pilot">
+            <button class="pilot-option selected" data-pilot="elon" aria-pressed="true"><img src="/assets/elon-pilot.webp" alt="" width="512" height="768" /><span>Elon</span></button>
+            <button class="pilot-option" data-pilot="trump" aria-pressed="false"><img src="/assets/trump.webp" alt="" width="512" height="768" /><span>Trump</span></button>
+            <button class="pilot-option" data-pilot="obama" aria-pressed="false"><img src="/assets/obama.webp" alt="" width="512" height="768" /><span>Obama</span></button>
+            <button class="pilot-option" data-pilot="biden" aria-pressed="false"><img src="/assets/biden.webp" alt="" width="512" height="768" /><span>Biden</span></button>
+            <button class="pilot-option" data-pilot="hunter" aria-pressed="false"><img src="/assets/hunter-biden.webp" alt="" width="512" height="768" /><span>Hunter</span></button>
+          </div>
+        </div>
+
+        <button class="start-button" id="startButton">
+          <span id="startButtonText">Fly as Elon</span>
+          <kbd>Enter</kbd>
+        </button>
+        <p class="controls-copy"><b>WASD</b> steer · <b>Space</b> rise · <b>Shift</b> boost · <b>C</b> camera</p>
+      </section>
+
+      <section class="hud" id="hud" aria-live="polite">
+        <div class="topbar">
+          <div class="mission-chip">
+            <span id="missionPilot">Elon flight</span>
+            <strong id="checkpointText">Gate 1 / 7</strong>
+            <small class="eco-status"><i></i> Adaptive · <b id="fpsText">-- fps</b></small>
+          </div>
+          <div class="hud-actions">
+            <button class="camera-button" id="cameraButton" aria-label="Switch camera view">↗ <span>Chase</span></button>
+            <button class="rescue-button" id="rescueButton" aria-label="Return to route">↺ <span>Rescue</span></button>
+            <button class="pause-button" id="pauseButton" aria-label="Pause game">Ⅱ <span>Pause</span></button>
+            <button class="sound-button" id="soundButton" aria-label="Toggle sound">♪</button>
+          </div>
+        </div>
+
+        <div class="route-guide" id="routeGuide">
+          <span class="route-arrow" id="routeArrow">↑</span>
+          <div><strong id="routeName">Gate 1</strong><small id="routeDistance">23 m ahead</small></div>
+        </div>
+
+        <div class="altimeter">
+          <span>ALT</span>
+          <strong id="altitudeText">0</strong>
+          <small>m</small>
+        </div>
+
+        <div class="speed-lines" id="speedLines" aria-hidden="true"></div>
+
+        <div class="bottom-hud">
+          <div class="audience-stats">
+            <div class="followers">
+              <span class="people-icon">●●●</span>
+              <div><strong id="followersText">1.2M</strong><span>followers watching</span></div>
+            </div>
+            <div class="sightings">
+              <span>★</span>
+              <div><strong id="sightingsText">0 / 4</strong><small>giants spotted</small></div>
+            </div>
+          </div>
+          <div class="fuel-wrap">
+            <div class="fuel-label"><span>Rotor power</span><strong id="fuelText">100%</strong></div>
+            <div class="fuel-track"><span id="fuelBar"></span></div>
+          </div>
+        </div>
+
+        <div class="touch-controls" aria-label="Touch controls">
+          <div class="touch-pad">
+            <button data-key="KeyW" aria-label="Forward">▲</button>
+            <button data-key="KeyA" aria-label="Left">◀</button>
+            <button data-key="KeyD" aria-label="Right">▶</button>
+            <button data-key="KeyS" aria-label="Backward">▼</button>
+          </div>
+          <button class="touch-lift" data-key="Space">Lift</button>
+        </div>
+      </section>
+
+      <section class="pause-screen" id="pauseScreen" aria-hidden="true">
+        <div class="pause-card">
+          <p>Rotors idling</p>
+          <h2>Paused</h2>
+          <button class="start-button" id="resumeButton">Resume flight</button>
+          <button class="secondary-button" id="pauseChangePilotButton">Change pilot</button>
+          <small>Press Esc to resume</small>
+        </div>
+      </section>
+
+      <section class="finish-screen" id="finishScreen">
+        <div class="finish-card">
+          <p>Flight test complete</p>
+          <h2>You broke<br />the internet.</h2>
+          <div class="score-row">
+            <div><strong id="finalTime">0:00</strong><span>flight time</span></div>
+            <div><strong id="finalFollowers">0</strong><span>new followers</span></div>
+          </div>
+          <button class="start-button" id="restartButton">Fly again</button>
+          <button class="secondary-button" id="changePilotButton">Change pilot</button>
+        </div>
+      </section>
+
+      <div class="toast" id="toast">Gate cleared!</div>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

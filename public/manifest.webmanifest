@@ -1,0 +1,17 @@
+{
+  "name": "Rotor Rush",
+  "short_name": "Rotor Rush",
+  "description": "A playful 3D helicopter-backpack obstacle game.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#91d8ec",
+  "theme_color": "#ff642e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
