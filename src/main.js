@@ -31,18 +31,18 @@ sun.position.set(-35, 60, 20);
 scene.add(sun);
 
 const mats = {
-  rock: new THREE.MeshStandardMaterial({ color: 0x31484d, roughness: 1 }),
-  darkRock: new THREE.MeshStandardMaterial({ color: 0x243a40, roughness: 1 }),
-  grass: new THREE.MeshStandardMaterial({ color: 0x789560, roughness: 1 }),
-  snow: new THREE.MeshStandardMaterial({ color: 0xf5fbff, roughness: .9 }),
-  road: new THREE.MeshStandardMaterial({ color: 0x99a8a8, roughness: 1 }),
-  water: new THREE.MeshStandardMaterial({ color: 0x3c96b6, roughness: .32, metalness: .05 }),
-  orange: new THREE.MeshStandardMaterial({ color: 0xff642e, roughness: .72 }),
-  yellow: new THREE.MeshStandardMaterial({ color: 0xffd447, roughness: .65, emissive: 0x4a2c00 }),
-  white: new THREE.MeshStandardMaterial({ color: 0xf7fbff, roughness: .75 }),
-  black: new THREE.MeshStandardMaterial({ color: 0x17232a, roughness: .68 }),
-  skin: new THREE.MeshStandardMaterial({ color: 0xe4ad86, roughness: .84 }),
-  glass: new THREE.MeshStandardMaterial({ color: 0x86d7e9, roughness: .22, metalness: .15 }),
+  rock: new THREE.MeshLambertMaterial({ color: 0x31484d }),
+  darkRock: new THREE.MeshLambertMaterial({ color: 0x243a40 }),
+  grass: new THREE.MeshLambertMaterial({ color: 0x789560 }),
+  snow: new THREE.MeshLambertMaterial({ color: 0xf5fbff }),
+  road: new THREE.MeshLambertMaterial({ color: 0x99a8a8 }),
+  water: new THREE.MeshPhongMaterial({ color: 0x3c96b6, shininess: 42 }),
+  orange: new THREE.MeshLambertMaterial({ color: 0xff642e }),
+  yellow: new THREE.MeshLambertMaterial({ color: 0xffd447, emissive: 0x4a2c00 }),
+  white: new THREE.MeshLambertMaterial({ color: 0xf7fbff }),
+  black: new THREE.MeshLambertMaterial({ color: 0x17232a }),
+  skin: new THREE.MeshLambertMaterial({ color: 0xe4ad86 }),
+  glass: new THREE.MeshPhongMaterial({ color: 0x86d7e9, shininess: 70 }),
 };
 
 function mesh(geometry, material, position, parent = scene) {
@@ -64,6 +64,7 @@ function instances(geometry, material, transforms, colors = []) {
     if (colors[index] !== undefined) objects.setColorAt(index, new THREE.Color(colors[index]));
   });
   objects.instanceMatrix.setUsage(THREE.StaticDrawUsage);
+  if (objects.instanceColor) objects.instanceColor.needsUpdate = true;
   scene.add(objects);
   return objects;
 }
@@ -156,10 +157,10 @@ function makeFaceLabel(text, color = '#13202a') {
 
 function createCharacter({ shirt = 0x1d2a32, pants = 0x20272b, hair = 0x503527, skin = 0xe4ad86, label = '' } = {}) {
   const group = new THREE.Group();
-  const skinMat = new THREE.MeshStandardMaterial({ color: skin, roughness: .84 });
-  const shirtMat = new THREE.MeshStandardMaterial({ color: shirt, roughness: .85 });
-  const pantsMat = new THREE.MeshStandardMaterial({ color: pants, roughness: .9 });
-  const hairMat = new THREE.MeshStandardMaterial({ color: hair, roughness: 1 });
+  const skinMat = new THREE.MeshLambertMaterial({ color: skin });
+  const shirtMat = new THREE.MeshLambertMaterial({ color: shirt });
+  const pantsMat = new THREE.MeshLambertMaterial({ color: pants });
+  const hairMat = new THREE.MeshLambertMaterial({ color: hair });
   const torso = mesh(new THREE.BoxGeometry(2.4, 3.1, 1.5), shirtMat, [0, 1.6, 0], group);
   torso.scale.x = 1.1;
   const head = mesh(new THREE.BoxGeometry(1.65, 1.7, 1.55), skinMat, [0, 4.05, 0], group);
@@ -295,7 +296,7 @@ const gatePositions = [
 gatePositions.forEach((position, index) => {
   const gate = new THREE.Group();
   gate.position.set(...position);
-  const ringMat = new THREE.MeshStandardMaterial({ color: index === 6 ? 0xff642e : 0xffd447, emissive: index === 6 ? 0x5c1000 : 0x5c3d00, roughness: .45 });
+  const ringMat = new THREE.MeshLambertMaterial({ color: index === 6 ? 0xff642e : 0xffd447, emissive: index === 6 ? 0x5c1000 : 0x5c3d00 });
   const ring = mesh(new THREE.TorusGeometry(5, .55, 8, 24), ringMat, [0, 0, 0], gate);
   ring.rotation.y = Math.PI / 2;
   const label = makeFaceLabel(index === 6 ? 'FINISH' : `GATE ${index + 1}`, index === 6 ? '#d33b17' : '#13202a');
@@ -307,7 +308,7 @@ gatePositions.forEach((position, index) => {
 
 const guideDots = [];
 for (let index = 0; index < 7; index += 1) {
-  const guideMaterial = new THREE.MeshStandardMaterial({ color: 0xffd447, emissive: 0x9b5b00, roughness: .35, transparent: true, opacity: .9 });
+  const guideMaterial = new THREE.MeshLambertMaterial({ color: 0xffd447, emissive: 0x9b5b00, transparent: true, opacity: .9 });
   const guideDot = mesh(new THREE.OctahedronGeometry(.34, 0), guideMaterial, [0, 0, 0]);
   guideDot.visible = false;
   guideDots.push(guideDot);
@@ -333,6 +334,7 @@ let toastTimer;
 let hudUpdateElapsed = 1;
 let renderedFrames = 0;
 let fpsWindowStart = performance.now();
+let needsRender = true;
 const velocity = new THREE.Vector3();
 const cameraTarget = new THREE.Vector3();
 const movementHeading = new THREE.Vector3();
@@ -363,6 +365,7 @@ function applyPilotVisual() {
   shirtMat.color.setHex(pilot.shirt);
   pantsMat.color.setHex(pilot.pants);
   hairMat.color.setHex(pilot.hair);
+  needsRender = true;
 }
 
 function selectPilot(pilotId) {
@@ -694,6 +697,7 @@ function updateCamera(delta) {
 let previousFrameTime = performance.now();
 function animate(frameTime = performance.now()) {
   requestAnimationFrame(animate);
+  if (gameState !== 'playing' && !needsRender) return;
   const activeFlight = gameState === 'playing' && (keys.size > 0 || velocity.lengthSq() > .7);
   const targetFps = gameState === 'playing' ? (activeFlight ? 60 : 30) : 15;
   const frameInterval = 1000 / targetFps;
@@ -707,6 +711,7 @@ function animate(frameTime = performance.now()) {
   updateParticles(delta);
   updateCamera(delta);
   renderer.render(scene, camera);
+  needsRender = false;
   renderedFrames += 1;
   if (frameTime - fpsWindowStart >= 1000) {
     ui.fps.textContent = `${Math.round(renderedFrames * 1000 / (frameTime - fpsWindowStart))} fps`;
@@ -721,4 +726,5 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
+  needsRender = true;
 });
