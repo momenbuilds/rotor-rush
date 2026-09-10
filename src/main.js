@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import './style.css';
 
 const canvas = document.querySelector('#game');
 const isCompactDevice = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
@@ -221,7 +220,7 @@ const pilotData = {
   biden: { name: 'Joe Biden', shortName: 'Biden', front: '/assets/biden.webp', shirt: 0x17274a, pants: 0x17274a, hair: 0xe8e5dc, skin: 0xe1a480 },
   hunter: { name: 'Hunter Biden', shortName: 'Hunter', front: '/assets/hunter-biden.webp', shirt: 0x232936, pants: 0x232936, hair: 0x5c463b, skin: 0xd59a75 },
 };
-let selectedPilotId = 'elon';
+let selectedPilotId = document.querySelector('.pilot-option[aria-pressed="true"]')?.dataset.pilot ?? 'elon';
 const pilotTextures = Object.fromEntries(Object.entries(pilotData).map(([id, pilot]) => {
   const texture = pilotTextureLoader.load(pilot.front);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -457,7 +456,7 @@ function rescuePlayer() {
   showToast('Back on route!');
 }
 
-function startGame() {
+export function startGame() {
   ui.start.classList.add('hidden');
   ui.hud.classList.add('visible');
   resetGame();
@@ -516,8 +515,7 @@ function finishGame() {
   if (rotorGain) rotorGain.gain.setTargetAtTime(.006, audioContext.currentTime, .2);
 }
 
-document.querySelector('#startButton').addEventListener('click', startGame);
-document.querySelectorAll('.pilot-option').forEach(option => option.addEventListener('click', () => selectPilot(option.dataset.pilot)));
+document.addEventListener('pilotchange', event => selectPilot(event.detail));
 document.querySelector('#restartButton').addEventListener('click', resetGame);
 document.querySelector('#changePilotButton').addEventListener('click', showPilotMenu);
 document.querySelector('#pauseChangePilotButton').addEventListener('click', showPilotMenu);
@@ -720,6 +718,7 @@ function animate(frameTime = performance.now()) {
   }
 }
 animate();
+document.documentElement.classList.add('game-ready');
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;

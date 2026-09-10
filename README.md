@@ -68,6 +68,7 @@ Rotor Rush deliberately favors smooth play and cool devices:
 
 - Static buildings, roofs, mountains, and rocks use `InstancedMesh` batches.
 - Character images are 512×768 WebP textures totaling under 200 KB.
+- The Three.js engine lazy-loads only after the player starts a flight.
 - Real-time shadow maps are replaced by a cheap soft blob shadow.
 - Rendering uses a reduced pixel ratio, targets 60 FPS while moving, throttles while idle, and only redraws menus when visual state changes.
 - HUD writes are throttled and hot-loop vector objects are reused.

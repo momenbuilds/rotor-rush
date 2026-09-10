@@ -14,7 +14,6 @@ for (const character of requiredCharacters) {
 
 const scripts = assets.filter(file => file.endsWith('.js'));
 const styles = assets.filter(file => file.endsWith('.css'));
-if (scripts.length !== 1 || styles.length !== 1) throw new Error('Expected one JavaScript and one CSS bundle.');
+if (scripts.length < 2 || styles.length !== 1) throw new Error('Expected lazy game and bootstrap JavaScript bundles plus one CSS bundle.');
 
 console.log(`Verified production build: ${assets.length} assets, all character textures under 100 KB.`);
-
