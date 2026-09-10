@@ -2,6 +2,8 @@
 
 Rotor Rush is a lightweight 3D browser game about flying a ridiculous helicopter backpack through Reykjavík. Pick a pilot, clear seven aerial gates, spot oversized celebrity landmarks, and collect followers along the way.
 
+**[Play Rotor Rush](https://rotor-rush.vercel.app)** · [Report a bug](https://github.com/momenbuilds/rotor-rush/issues)
+
 The game is built with vanilla JavaScript, Three.js, and Vite. It runs entirely in the browser with no account, backend, tracking, or paid API.
 
 ## Highlights
