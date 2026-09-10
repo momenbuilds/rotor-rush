@@ -418,7 +418,7 @@ function startAudio() {
   rotorOscillator.start();
 }
 
-function resetGame() {
+function resetCourseState() {
   checkpoint = 0;
   fuel = 100;
   followers = 1_200_000;
@@ -441,6 +441,10 @@ function resetGame() {
   updateGateEmphasis();
   ui.finish.classList.remove('visible');
   ui.finish.setAttribute('aria-hidden', 'true');
+}
+
+function resetGame() {
+  resetCourseState();
   gameState = 'playing';
   startTime = performance.now();
   startAudio();
@@ -465,11 +469,12 @@ export function startGame() {
 }
 
 function showPilotMenu() {
+  resetCourseState();
   gameState = 'menu';
-  keys.clear();
-  faceCamera = false;
-  applyPilotVisual();
-  ui.camera.innerHTML = '↗ <span>Chase</span>';
+  camera.position.set(10, 8, 15);
+  updateCamera(1);
+  playerShadow.position.set(player.position.x, 1.08, player.position.z);
+  needsRender = true;
   ui.hud.classList.remove('visible');
   ui.finish.classList.remove('visible');
   ui.finish.setAttribute('aria-hidden', 'true');
